@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time</title>
+  </head>
+  <body>
+    <h1>Time is Passing</h1>
+    <div id="day-minutes"></div>
+  </body>
+
+  <style>
+    h1,
+    h2 {
+      font-family: Arial, sans-serif;
+    }
+
+    .time-wrapper {
+      display: inline-block;
+      position: relative;
+      min-width: 20px;
+      min-height: 20px;
+      max-width: 200px;
+      max-height: 200px;
+      margin: 2px;
+      border: 2px solid black;
+    }
+    .time-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background-color: pink;
+    }
+  </style>
+
+  <script>
+    const SECONDS_IN_ONE_DAY = 86400;
+    const SECONDS_IN_ONE_HOUR = 3600;
+    const SECONDS_IN_ONE_MINUTE = 60;
+
+    function createTimeBoxes(
+      el,
+      secondsInTimeframe,
+      secondsInTimeUnit,
+      passedSecondsInTimeframe
+    ) {
+      el.replaceChildren();
+      for (let i = 1; i < secondsInTimeframe / secondsInTimeUnit + 1; i++) {
+        const currendSeconds = i * secondsInTimeUnit;
+
+        const offset = currendSeconds - passedSecondsInTimeframe;
+
+        const wrapper = document.createElement("div");
+        const blackArea = document.createElement("div");
+
+        let perc;
+        if (offset <= 0) {
+          // full black
+          perc = 100;
+        } else if (offset < secondsInTimeUnit) {
+          // gradient
+          perc = (1 - offset / secondsInTimeUnit) * 100;
+        } else {
+          // full white
+          perc = 0;
+        }
+
+        blackArea.style.width = `${perc}%`;
+        blackArea.classList.add("time-content");
+        wrapper.appendChild(blackArea);
+        wrapper.classList.add("time-wrapper");
+
+        el.appendChild(wrapper);
+      }
+    }
+
+    function initApp() {
+      const now = new Date();
+
+      const passedDaySeconds =
+        now.getSeconds() + now.getMinutes() * 60 + now.getHours() * 3600;
+
+      //   createTimeBoxes(
+      //     document.getElementById("day-hours"),
+      //     SECONDS_IN_ONE_DAY,
+      //     SECONDS_IN_ONE_HOUR,
+      //     passedDaySeconds
+      //   );
+      createTimeBoxes(
+        document.getElementById("day-minutes"),
+        SECONDS_IN_ONE_DAY,
+        SECONDS_IN_ONE_MINUTE,
+        passedDaySeconds
+      );
+    }
+
+    initApp();
+
+    setInterval(() => {
+      initApp();
+    }, 1000);
+  </script>
+</html>
